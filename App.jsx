@@ -40,7 +40,31 @@ const MINISTERIAL_SERVANTS_INITIAL = [
   "Kawara, Biology","Starenko, Lukas","Bisnan, Joey","Krecichwost, Eric",
 ];
 const ALL_PUBLISHERS_INITIAL = [
-  // ... your full list as before ...
+  "Pecha, Marek","Atherden, Wayne","Ulrich, Ivan","Stika, Jiri","Fillery, James",
+  "Kroc, Lukas","Bisnan, Joey","Elliott, Sue","Hrubes, Lawrence","Hrubes, Martina",
+  "Chibale, Alex Chimanse","Karakurt, Mertcan","Kawara, Biology","Kawara, Merida",
+  "Kawara, Nyaradzo","Naidoo, Chantel","Nesvadbova, Vladimira","Owusu-Yeboah Adwoa",
+  "Owusu-Yeboah Solomon","Sobicka, Ondrej","Sobickova, Katerina","Stikova, Marcela",
+  "Turek, Shirley","Ulrichova, Jasmine","Ulrichova, Meg","Vojacek, Jima",
+  "Atherden, Leon","Atherden, Martina","Ayoub Glinsky, Rachelle","Bello, Samira",
+  "Botnar, Kristyna","Botnar, Vladimir","Grimova Anastasia","Chlabicz, Pawel",
+  "Kopcak, Jakub","Koutsky, Sharlaine","Kuzemkova, Sara","Mae, Johna",
+  "Owoeye, Feyisao","Palenik, Daniel","Pechova, Veronika","Silha, Jiri",
+  "Silhova, Nely","Schubert, Petra","Urban, Mate","Bartos, Pavel",
+  "Bartosova, Bembe","Beverton, Romana","Carino, Russel","Dvorak Vukovicova, Nikolina",
+  "Fillery, Petra","Hrubesova, Kamilla","Hrubesova, Madelen","Krecichwost Eric",
+  "Krecichwost Layla","Krecichwost Tiffany","Kroc, Zuzana","Magdura, Jesriel",
+  "Maniatakis, Jeanne","Maniatakis, Mathew","Sedlak, Petr","Sedlakova, Alexandra",
+  "Smith, Lorna","Warsow, Michael","Krupka, Jaromir","Antignani, Roberto",
+  "Bohat, Gabriela","Bohat, Robert","Emmett, Frank","Gomonit, Joy",
+  "Kalu Samuel, Tenderly Nkeiru","Kalu, Samuel Anya","Kamara, Agnes","Kamara, James",
+  "Kamara, Lisa","Lukhanina Anna","Lukhanina Svetlana","Nzamutuma, Anne Anitha",
+  "Ray, Bryan Matthew","Starenko, Lukas","Syvous, Kateryna","Ubungen, Andrea",
+  "Warsow, Jessy","Warsow, Noah","Weston, Mark","Weston, Veronika",
+  "Wright, Monika","Wright, Noah","Osuoha, Jonathan","Ngongang, Morgan",
+  "Cupidon, Cliff","Cupidon, Karin","Eybatoweru, Richard","Ibe, Jerry","Ibe, Lois",
+  "James, Muriel","Ngongang, Lucresse","Opara, Chidinma Jennifer","Osuoha, Justina",
+  "Owoeye, Olamide"
 ];
 
 export const ASSIGNMENTS = [
