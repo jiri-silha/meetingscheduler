@@ -88,7 +88,8 @@ export default function WatchtowerScheduler({
 
   // 4-B. Publisher picker with role + availability logic
   const PublisherSelect = key => {
-    const isChairmanAndPrayer = key === "Opening Prayer";
+    const isChairmanAndPrayer =
+  key === "Opening Prayer" || key === "Chairman and Prayer";
 
     // Hospitality handled separately
     if (key === "Hospitality") {
@@ -232,7 +233,14 @@ const isSpecial = Boolean(layoutOverride);   // → true for 14–20 Jul 2025
   
   return (
     <main className="content">
-  <h2 className="day-title">{dayLabel}</h2>
+  {layoutOverride && (
+  <div className="info-banner">
+    <div className="headline">CO Week with&nbsp;Johan&nbsp;and&nbsp;Elisabeth&nbsp;Meulmeester</div>
+    <div className="subline">(15–20&nbsp;July&nbsp;2025)</div>
+  </div>
+)}
+
+<h2 className="day-title">{dayLabel}</h2>
 
   {isSpecial ? (
     /* ---------- SPECIAL WEEKEND LAYOUT (14–20 Jul 2025) ---------- */
