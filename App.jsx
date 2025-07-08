@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import PasswordProtectedApp from "./components/PasswordProtectedApp";
 import MeetingScheduler from "./MeetingScheduler";
 import WatchtowerScheduler from "./WatchtowerScheduler";
 import { getSpecialLayout } from "./specialWeeks";
@@ -394,6 +395,7 @@ export default function App() {
   if (authLoading || loading) return <LoadingScreen />;
 
   return (
+    <PasswordProtectedApp>
     <div className="page-wrapper">
       <Header
         activePage={activePage}
@@ -496,5 +498,6 @@ export default function App() {
         </button>
       </nav>
     </div>
+    </PasswordProtectedApp>
   );
 }
