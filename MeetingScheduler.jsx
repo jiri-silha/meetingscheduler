@@ -28,6 +28,40 @@ const APPLY_ASSIGNMENTS = [
 
 const CLEANING_OPTIONS = ["Group 1", "Group 2", "Group 3", "Group 4"];
 
+const SONG_NUMBERS = Array.from({ length: 161 }, (_, i) => String(i + 1));
+
+const ListSelectRow = (key, LIST, placeholder) => (
+  <Listbox
+    value={selectedAssignments[key] || ""}
+    onChange={v => onAssignmentChange(key, v)}
+    disabled={!isEditable}
+  >
+    <div className="assignment">
+      <Listbox.Button className="assignment-button">
+        <span className="assignment-label">{key}</span>
+        <span className={`dropdown-value ${!selectedAssignments[key] ? "text-gray-400" : ""}`}>
+          {selectedAssignments[key] || placeholder}
+        </span>
+        {isEditable && <ChevronDownIcon className="h-4 w-4" />}
+      </Listbox.Button>
+      <Listbox.Options className="options-panel">
+        <Listbox.Option value="">
+          {({ active }) => (
+            <div className={`option-line${active ? " active" : ""}`}>{placeholder}</div>
+          )}
+        </Listbox.Option>
+        {LIST.map(item => (
+          <Listbox.Option key={item} value={item}>
+            {({ active }) => (
+              <div className={`option-line${active ? " active" : ""}`}>{item}</div>
+            )}
+          </Listbox.Option>
+        ))}
+      </Listbox.Options>
+    </div>
+  </Listbox>
+);
+
 const SECTIONS = [
   {
     title: "MEETING CHAIRMAN AND PRAYERS",
@@ -271,8 +305,8 @@ const TextInputRow = ({ id, placeholder }) => (
     chairSec.assignments = [
       "Chairman",
       "Opening Prayer",
-      { key: "Closing Prayer", type: "text" }, // ← free-text input
-      "Closing Song",                          // ← new dropdown
+      { key: "Closing Prayer", type: "text" },
+      { key: "Closing Song", type: "song" },
     ];
 
     // 4-B  LIVING AS CHRISTIANS section tweaks
@@ -295,6 +329,8 @@ const renderRow = (item) => {
           {Select(fieldKey, isEditable)}
         </div>
       )
+    : type === "song"
+    ? <div key={fieldKey}>{ListSelectRow(fieldKey, SONG_NUMBERS, "Select song")}</div>
     : (
         <TextInputRow
           key={fieldKey}
