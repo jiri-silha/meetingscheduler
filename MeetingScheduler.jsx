@@ -77,22 +77,22 @@ export default function MeetingScheduler({
   
   const counts = buildCounts(selectedAssignments);
 
-    /* -------- text-input helper (used for Closing Prayer & Service Talk) -------- */
-  const TextInputRow = (key, placeholder) => (
-    <div className="assignment">
-      <div className="assignment-button">
-        <span className="assignment-label">{key}</span>
-        <input
-          type="text"
-          className="text-input dropdown-value"
-          placeholder={placeholder}
-          value={selectedAssignments[key] || ""}
-          onChange={e => onAssignmentChange(key, e.target.value)}
-          disabled={!isEditable}
-        />
-      </div>
+  /* -------- free-text input row (Closing Prayer, Service Talk) -------- */
+const TextInputRow = ({ id, placeholder }) => (
+  <div className="assignment">
+    <div className="assignment-button">
+      <span className="assignment-label">{id}</span>
+      <input
+        type="text"
+        className="text-input dropdown-value"
+        placeholder={placeholder}
+        value={selectedAssignments[id] || ""}
+        onChange={e => onAssignmentChange(id, e.target.value)}
+        disabled={!isEditable}
+      />
     </div>
-  );
+  </div>
+);
 
   /** Render one line in the dropdown, with badges for assignments & unavailability */
   const optionRow = (pub, { active, disabled }) => (
@@ -285,13 +285,24 @@ export default function MeetingScheduler({
   }
 
   /* helper to render either a dropdown or a text input */
-  const renderRow = (item) => {
-    const key  = typeof item === "string" ? item       : item.key;
-    const type = typeof item === "string" ? "dropdown" : item.type;
-    return type === "dropdown"
-      ? <div key={key} className="assignment">{Select(key, isEditable)}</div>
-      : <TextInputRow key={key} placeholder={`Enter ${key}`} />;
-  };
+const renderRow = (item) => {
+  const fieldKey = typeof item === "string" ? item : item.key;      // one name
+  const type     = typeof item === "string" ? "dropdown" : item.type;
+
+  return type === "dropdown"
+    ? (
+        <div key={fieldKey} className="assignment">
+          {Select(fieldKey, isEditable)}
+        </div>
+      )
+    : (
+        <TextInputRow
+          key={fieldKey}
+          id={fieldKey}
+          placeholder={`Enter ${fieldKey}`}
+        />
+      );
+};
 
   return (
     <main className="content">
