@@ -313,6 +313,11 @@ h2.pub-title {
   background: transparent;
 }
 
+.text-input.dropdown-value {
+  width: 100%;
+  min-width: 12rem;
+}
+
 .text-input::placeholder {
   color: #ccc;
   font-weight: 300;
