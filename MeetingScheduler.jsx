@@ -261,6 +261,39 @@ const TextInputRow = ({ id, placeholder }) => (
   );
 };
 
+/* ---------- fixed-list dropdown (songs, cleaning options, etc.) ---------- */
+const ListSelectRow = (key, LIST, placeholder) => (
+  <Listbox
+    value={selectedAssignments[key] || ""}
+    onChange={v => onAssignmentChange(key, v)}
+    disabled={!isEditable}
+  >
+    <div className="assignment">
+      <Listbox.Button className="assignment-button">
+        <span className="assignment-label">{key}</span>
+        <span className={`dropdown-value ${!selectedAssignments[key] ? "text-gray-400" : ""}`}>
+          {selectedAssignments[key] || placeholder}
+        </span>
+        {isEditable && <ChevronDownIcon className="h-4 w-4" />}
+      </Listbox.Button>
+      <Listbox.Options className="options-panel">
+        <Listbox.Option value="">
+          {({ active }) => (
+            <div className={`option-line${active ? " active" : ""}`}>{placeholder}</div>
+          )}
+        </Listbox.Option>
+        {LIST.map(item => (
+          <Listbox.Option key={item} value={item}>
+            {({ active }) => (
+              <div className={`option-line${active ? " active" : ""}`}>{item}</div>
+            )}
+          </Listbox.Option>
+        ))}
+      </Listbox.Options>
+    </div>
+  </Listbox>
+);
+
   /* ======= build the section list, injecting special-week tweaks ======= */
   const isSpecial = Boolean(layoutOverride);    // true only for 14 – 20 Jul 2025
 
@@ -292,13 +325,18 @@ const renderRow = (item) => {
   const type     = typeof item === "string" ? "dropdown" : item.type;
 
   return type === "dropdown"
+  ? (
+      <div key={fieldKey} className="assignment">
+        {Select(fieldKey, isEditable)}
+      </div>
+    )
+  : type === "song"
     ? (
-        <div key={fieldKey} className="assignment">
-          {Select(fieldKey, isEditable)}
-        </div>
+        /* no outer <div> – keep ListSelectRow’s own .assignment wrapper */
+        <React.Fragment key={fieldKey}>
+          {ListSelectRow(fieldKey, SONG_NUMBERS, "Select song")}
+        </React.Fragment>
       )
-    : type === "song"
-    ? <div key={fieldKey}>{ListSelectRow(fieldKey, SONG_NUMBERS, "Select song")}</div>
     : (
         <TextInputRow
           key={fieldKey}
