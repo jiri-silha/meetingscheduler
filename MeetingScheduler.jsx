@@ -79,22 +79,31 @@ export default function MeetingScheduler({
   
   const counts = buildCounts(selectedAssignments);
 
-  /* -------- free-text input row (Closing Prayer, Service Talk) -------- */
-const TextInputRow = ({ id, placeholder }) => (
-  <div className="assignment">
-    <div className="assignment-button">
-      <span className="assignment-label">{id}</span>
-      <input
-        type="text"
-        className="text-input dropdown-value"
-        placeholder={placeholder}
-        value={selectedAssignments[id] || ""}
-        onChange={e => onAssignmentChange(id, e.target.value)}
-        disabled={!isEditable}
-      />
+/* ---- free-text row (Closing Prayer, Service Talk) ---- */
+const TextInputRow = ({ id, placeholder }) => {
+  const [local, setLocal] = React.useState(selectedAssignments[id] || "");
+
+  // Push to parent state only when user stops typing (onBlur)
+  const commit = () => onAssignmentChange(id, local);
+
+  return (
+    <div>
+      <div className="assignment-button">
+        <span className="assignment-label">{id}</span>
+
+        <input
+          type="text"
+          className="text-input"
+          placeholder={placeholder}
+          defaultValue={local}          // ← uncontrolled
+          onChange={e => setLocal(e.target.value)}
+          onBlur={commit}
+          disabled={!isEditable}
+        />
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
   /** Render one line in the dropdown, with badges for assignments & unavailability */
   const optionRow = (pub, { active, disabled }) => (
@@ -339,7 +348,6 @@ const renderRow = (item) => {
       )
     : (
         <TextInputRow
-          key={fieldKey}
           id={fieldKey}
           placeholder={`Enter ${fieldKey}`}
         />
@@ -347,61 +355,115 @@ const renderRow = (item) => {
 };
 
   return (
-    <main className="content">
-      <h2 className="day-title">{dayLabel}</h2>
+  <main className="content">
+    <h2 className="day-title">{dayLabel}</h2>
 
-      {sections.map((sec, i) => {
-        if (sec.marker === "APPLY") {
-          return (
-            <div key={i} className="section beige">
-              <h3 className="section-title">
-                <span className="section-title-full">Apply Yourself to the Field Ministry</span>
-                <span className="section-title-short">Field Ministry</span>
-              </h3>
+    {isSpecial ? (
+      /* ───────────── SPECIAL MIDWEEK LAYOUT (14 – 20 Jul 2025) ───────────── */
+      <>
+  {/* CHAIRMAN & PRAYERS */}
+  <section className="section">
+    <h3 className="section-title">Meeting Chairman & Prayers</h3>
 
-              {APPLY_ASSIGNMENTS.map(
-                ({ key: studentKey, label: studentLabel, asstKey, labelAsst }, idx) => (
-                  <div key={studentKey} className="apply-group">
-                    {/* Student row */}
-                    <div className="assignment">{Select(studentKey, isEditable)}</div>
-                    {/* Assistant row */}
-                    <div className="assignment">{Select(asstKey, isEditable)}</div>
-                  </div>
-                )
-              )}
-            </div>
-          )
-        }
+    <div className="assignment">{Select("Chairman", isEditable)}</div>
+    <div className="assignment">{Select("Opening Prayer", isEditable)}</div>
+    <div className="assignment">
+      <TextInputRow id="Closing Prayer" placeholder="Name" />
+    </div>
+    <div className="assignment">
+      {ListSelectRow("Closing Song", SONG_NUMBERS, "Select song")}
+    </div>
+  </section>
 
-        return (
-          <div
-            key={i}
-            className={"section" + (sec.color ? " " + sec.color : "")}
-          >
-            <h3 className="section-title">
-              <span className="section-title-full">{sec.title}</span>
-              <span className="section-title-short">{sec.shortTitle}</span>
-            </h3>
-            {sec.assignments.map(renderRow)}
-          </div>
-        );
-      })}
+  {/* TREASURES (unchanged) */}
+  <section className="section blue">
+    <h3 className="section-title">Treasures from God’s Word</h3>
+    {["Treasures", "Spiritual Gems", "Bible Reading"].map(id => (
+      <div key={id} className="assignment">{Select(id, isEditable)}</div>
+    ))}
+  </section>
 
-      <div className="section duties-section">
-  <h3 className="section-title">Duties</h3>
-  {DUTIES.map(d => (
-    d === "Cleaning" ? (
-      <React.Fragment key={d}>
-        {Select(d, isEditable)}
-      </React.Fragment>
-    ) : (
-      <div key={d} className="assignment">
-        {Select(d, isEditable)}
+  {/* APPLY YOURSELF (unchanged) */}
+  <section className="section beige">
+    <h3 className="section-title">
+      <span className="section-title-full">Apply Yourself to the Field&nbsp;Ministry</span>
+      <span className="section-title-short">Field&nbsp;Ministry</span>
+    </h3>
+    {APPLY_ASSIGNMENTS.map(({ key: s, asstKey: a }) => (
+      <div key={s} className="apply-group">
+        <div className="assignment">{Select(s, isEditable)}</div>
+        <div className="assignment">{Select(a, isEditable)}</div>
       </div>
-    )
-  ))}
-</div>
+    ))}
+  </section>
 
-    </main>
-  );
+  {/* LIVING AS CHRISTIANS */}
+  <section className="section red">
+    <h3 className="section-title">Living as Christians</h3>
+
+    <div className="assignment">{Select("Part 1", isEditable)}</div>
+    <div className="assignment">{Select("Part 2", isEditable)}</div>
+    <div className="assignment">
+      <TextInputRow id="Service Talk" placeholder="Title" />
+    </div>
+  </section>
+
+  {/* DUTIES (unchanged) */}
+  <section className="section duties-section">
+    <h3 className="section-title">Duties</h3>
+    {DUTIES.map(d =>
+      d === "Cleaning"
+        ? <React.Fragment key={d}>{Select(d, isEditable)}</React.Fragment>
+        : <div key={d} className="assignment">{Select(d, isEditable)}</div>
+    )}
+  </section>
+</>
+    ) : (
+      /* ───────────── STANDARD LAYOUT (all other weeks) ───────────── */
+      <>
+        {sections.map((sec, i) => {
+          if (sec.marker === "APPLY") {
+            return (
+              <section key="APPLY" className="section beige">
+                <h3 className="section-title">
+                  <span className="section-title-full">Apply Yourself to the Field&nbsp;Ministry</span>
+                  <span className="section-title-short">Field&nbsp;Ministry</span>
+                </h3>
+                {APPLY_ASSIGNMENTS.map(({ key: s, asstKey: a }) => (
+                  <div key={s} className="apply-group">
+                    <div className="assignment">{Select(s, isEditable)}</div>
+                    <div className="assignment">{Select(a, isEditable)}</div>
+                  </div>
+                ))}
+              </section>
+            );
+          }
+
+          return (
+            <section
+              key={sec.shortTitle}
+              className={"section" + (sec.color ? " " + sec.color : "")}
+            >
+              <h3 className="section-title">
+                <span className="section-title-full">{sec.title}</span>
+                <span className="section-title-short">{sec.shortTitle}</span>
+              </h3>
+              {sec.assignments.map(renderRow)}
+            </section>
+          );
+        })}
+
+        {/* DUTIES (standard weeks) */}
+        <section className="section duties-section">
+          <h3 className="section-title">Duties</h3>
+          {DUTIES.map(d =>
+            d === "Cleaning"
+              ? <React.Fragment key={d}>{Select(d, isEditable)}</React.Fragment>
+              : <div key={d} className="assignment">{Select(d, isEditable)}</div>
+          )}
+        </section>
+      </>
+    )}
+  </main>
+);
 }
