@@ -25,6 +25,7 @@ export default function WatchtowerScheduler({
   unavailabilities = {},
   lastAssigned = {},
   isEditable,
+  layoutOverride = null,
 }) {
 
   // 1. Count assignments ONLY for this weekend schedule
@@ -126,6 +127,23 @@ export default function WatchtowerScheduler({
       });
     }
 
+    /* -------- free-text row (Speaker, Concluding Prayer, etc.) -------- */
+const TextInputRow = (id, placeholder) => (
+  <div className="assignment">
+    <div className="assignment-button">
+      <span className="assignment-label">{id}</span>
+      <input
+        type="text"
+        className="text-input dropdown-value"
+        placeholder={placeholder}
+        value={selectedAssignments[id] || ""}
+        onChange={e => onAssignmentChange(id, e.target.value)}
+        disabled={!isEditable}
+      />
+    </div>
+  </div>
+);
+
     const sortedAvailable = sortByLastAssigned(available);
     const sortedAssigned = sortByLastAssigned(assigned);
     const sortedUnavailable = sortByLastAssigned(unavailable);
@@ -209,11 +227,50 @@ console.log(
   PUBLISHERS.filter(isUnavailable)
 );
   
+  /* ======= toggle layout if this is a “special” week ======= */
+const isSpecial = Boolean(layoutOverride);   // → true for 14–20 Jul 2025
   
   return (
     <main className="content">
-      <h2 className="day-title">{dayLabel}</h2>
+  <h2 className="day-title">{dayLabel}</h2>
 
+  {isSpecial ? (
+    /* ---------- SPECIAL WEEKEND LAYOUT (14–20 Jul 2025) ---------- */
+    <>
+      {/* CHAIRMAN */}
+      <section className="section">
+        <h3 className="section-title">Chairman</h3>
+        {PublisherSelect("Chairman and Prayer")}
+        {ListSelectRow("Opening Song", SONG_NUMBERS, "Select song")}
+        {ListSelectRow("Concluding Song", SONG_NUMBERS, "Select song")}
+        {TextInputRow("Concluding Prayer", "Name")}
+      </section>
+
+      {/* TALKS */}
+      <section className="section public-talk">
+        <h3 className="section-title">Talks</h3>
+        {TextInputRow("Speaker", "Speaker name")}
+        {TextInputRow("Public Talk", "Talk title")}
+        {TextInputRow("Concluding Talk", "Talk title")}
+      </section>
+
+      {/* WATCHTOWER */}
+      <section className="section watchtower">
+        <h3 className="section-title">Watchtower Study</h3>
+        {PublisherSelect("WT Conductor")}
+      </section>
+
+      {/* DUTIES (unchanged) */}
+      <section className="section duties-section">
+        <h3 className="section-title">Duties</h3>
+        {DUTIES.map(d => (
+          <Fragment key={d}>{PublisherSelect(d)}</Fragment>
+        ))}
+      </section>
+    </>
+  ) : (
+    /* ---------- STANDARD WEEKEND LAYOUT (all other weeks) ---------- */
+    <>
       {/* CHAIRMAN */}
       <section className="section">
         <h3 className="section-title">Chairman</h3>
@@ -245,6 +302,8 @@ console.log(
           <Fragment key={d}>{PublisherSelect(d)}</Fragment>
         ))}
       </section>
-    </main>
+    </>
+  )}
+</main>
   );
 }
