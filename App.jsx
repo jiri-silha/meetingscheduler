@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import MeetingScheduler from "./MeetingScheduler";
 import WatchtowerScheduler from "./WatchtowerScheduler";
 import { getSpecialLayout } from "./specialWeeks";
+import { isSpecialWeek } from "./specialWeeks";
 import PublishersPage from "./PublishersPage";
 import Header from "./components/Header";
 import LoginModal from "./components/LoginModal";
@@ -124,16 +125,19 @@ export default function App() {
   const specialLayout = useMemo(() => getSpecialLayout(monday), //returns { midweek, weekend } or null
   [monday]);
 
-  const midweekDate = ymdLocal(addDays(currentMonday, 2));
+  // Tuesday (offset 1) on special weeks, otherwise Wednesday (offset 2)
+  const midOffset   = isSpecialWeek(currentMonday) ? 1 : 2;
+
+  const midweekDate = ymdLocal(addDays(currentMonday, midOffset));
   const weekendDate = ymdLocal(addDays(currentMonday, 6));
 
-  const midweekDay = addDays(currentMonday, 2).toLocaleDateString(undefined, {
+  const midweekDay  = addDays(currentMonday, midOffset).toLocaleDateString(undefined, {
     weekday: "long", month: "long", day: "numeric"
   });
-  const weekendDay = addDays(currentMonday, 6).toLocaleDateString(undefined, {
+  const weekendDay  = addDays(currentMonday, 6).toLocaleDateString(undefined, {
     weekday: "long", month: "long", day: "numeric"
   });
-  const weekLabel = formatWeekRange(currentMonday);
+  const weekLabel   = formatWeekRange(currentMonday);
 
   const [elders, setElders] = useState(ELDERS_INITIAL);
   const [ministerialServants, setMinisterialServants] = useState(MINISTERIAL_SERVANTS_INITIAL);
