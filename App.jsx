@@ -8,7 +8,7 @@ import PublishersPage from "./PublishersPage";
 import Header from "./components/Header";
 import LoginModal from "./components/LoginModal";
 import { DUTIES } from "./MeetingScheduler";
-import { getTreasuresTheme, getLivingParts } from "./components/meetingThemes";
+import { getTreasuresTheme } from "./components/meetingThemes";
 
 import {
   saveSchedules,
@@ -121,7 +121,6 @@ export default function App() {
   const [currentMonday, setCurrentMonday] = useState(() => getMonday());
 
   const [treasureTheme, setTreasureTheme] = useState("Treasures from God’s Word");
-  const [livingParts, setLivingParts] = useState(["Part 1", "Part 2"]);
 
   // Monday-of-the-week the user is viewing
   const monday = useMemo(() => currentMonday, [currentMonday]);
@@ -253,15 +252,6 @@ export default function App() {
   (async () => {
     const theme = await getTreasuresTheme(currentMonday);
     if (!dead) setTreasureTheme(theme);
-  })();
-  return () => { dead = true; };
-}, [currentMonday]);
-
-  useEffect(() => {
-  let dead = false;
-  (async () => {
-    const parts = await getLivingParts(currentMonday);
-    if (!dead) setLivingParts(parts);
   })();
   return () => { dead = true; };
 }, [currentMonday]);
@@ -445,7 +435,6 @@ export default function App() {
           plannerTab === "lm" ? (
             <MeetingScheduler
               treasureTheme={treasureTheme}
-              livingPartTitles={livingParts}
               monday={monday}
               layoutOverride={specialLayout?.midweek}
               weekLabel={weekLabel}
