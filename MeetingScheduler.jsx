@@ -73,7 +73,7 @@ export const DUTIES = [
 
 export default function MeetingScheduler({
   treasureTheme = "Treasures from God's Word",
-  livingPartTitles = ["Part 1", "Part 2"],
+  livingParts = ["Part 1", "Part 2"],
   dayLabel,
   meetingDate,
   PUBLISHERS,
@@ -136,9 +136,9 @@ if (current && !options.includes(current)) {
   {id === "Treasures"
     ? treasureTheme
     : id === "Part 1"
-      ? livingPartTitles[0] || "Part 1"
+      ? (livingParts[0] || "Part 1")
       : id === "Part 2"
-        ? (livingPartTitles[1] || "Part 2")
+        ? (livingParts[1] || "Part 2")
         : id}
 </span>
           <span className={`dropdown-value ${!current ? "text-gray-400" : ""}`}>
@@ -279,22 +279,12 @@ if (current && !options.includes(current)) {
           </section>
 
           {/* LIVING AS CHRISTIANS */}
-<section className="section red">
-  <h3 className="section-title">Living as Christians</h3>
-
-  {/* dynamic Part rows */}
-  <div className="assignment">{Select("Part 1", isEditable)}</div>
-  {livingPartTitles.length > 1 && (
-    <div className="assignment">{Select("Part 2", isEditable)}</div>
-  )}
-
-  {/* Service Talk (text input) only on CO week */}
-  <TextInputRow id="Service Talk" placeholder="Title" />
-
-  {/* CBS rows always present */}
-  <div className="assignment">{Select("CBS Conductor", isEditable)}</div>
-  <div className="assignment">{Select("CBS Reader", isEditable)}</div>
-</section>
+          <section className="section red">
+            <h3 className="section-title">Living as Christians</h3>
+            {Select("Part 1", isEditable)}
+            {livingParts.length > 1 && Select("Part 2", isEditable)}
+            <TextInputRow id="Service Talk" placeholder="Title" />
+          </section>
 
           {/* DUTIES */}
           <section className="section duties-section">
@@ -310,23 +300,22 @@ if (current && !options.includes(current)) {
         /* ───────── STANDARD MIDWEEK LAYOUT ───────── */
         <>
           {sections.map(sec => {
-            if (sec.shortTitle === "Living as Christians") {
-  return (
-    <section key="LAC" className="section red">
-      <h3 className="section-title">Living as Christians</h3>
-
-      {/* dynamic Part rows */}
-      <div className="assignment">{Select("Part 1", isEditable)}</div>
-      {livingPartTitles.length > 1 && (
-        <div className="assignment">{Select("Part 2", isEditable)}</div>
-      )}
-
-      {/* CBS rows always present */}
-      <div className="assignment">{Select("CBS Conductor", isEditable)}</div>
-      <div className="assignment">{Select("CBS Reader", isEditable)}</div>
-    </section>
-  );
-}
+            if (sec.marker === "APPLY") {
+              return (
+                <section key="APPLY" className="section beige">
+                  <h3 className="section-title">
+                    <span className="section-title-full">Apply Yourself to the Field&nbsp;Ministry</span>
+                    <span className="section-title-short">Field&nbsp;Ministry</span>
+                  </h3>
+                  {APPLY_ASSIGNMENTS.map(({ key: s, asstKey: a }) => (
+                    <div key={s} className="apply-group">
+                      {Select(s, isEditable)}
+                      {Select(a, isEditable)}
+                    </div>
+                  ))}
+                </section>
+              );
+            }
 
             return (
               <section key={sec.shortTitle} className={`section${sec.color ? " " + sec.color : ""}`}>
@@ -334,9 +323,11 @@ if (current && !options.includes(current)) {
                   <span className="section-title-full">{sec.title}</span>
                   <span className="section-title-short">{sec.shortTitle}</span>
                 </h3>
-                {sec.assignments.map(a => (
-  <Fragment key={a}>{Select(a, isEditable)}</Fragment>
-))}
+                {sec.assignments
+                .filter(a => a !== "Part 2" || livingParts.length > 1)
+                .map(a => (
+                  <Fragment key={a}>{Select(a, isEditable)}</Fragment>
+                ))}
               </section>
             );
           })}
