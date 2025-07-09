@@ -72,6 +72,8 @@ export const DUTIES = [
 /* ───────────────────────── component ───────────────────────── */
 
 export default function MeetingScheduler({
+  treasureTheme = "Treasures from God's Word",
+  livingPartTitles = ["Part 1", "Part 2"],
   dayLabel,
   meetingDate,
   PUBLISHERS,
@@ -130,7 +132,15 @@ if (current && !options.includes(current)) {
     >
       <div className="assignment">
         <Listbox.Button className="assignment-button">
-          <span className="assignment-label">{id}</span>
+          <span className="assignment-label">
+  {id === "Treasures"
+    ? treasureTheme
+    : id === "Part 1"
+      ? livingPartTitles[0] || "Part 1"
+      : id === "Part 2"
+        ? (livingPartTitles[1] || "Part 2")
+        : id}
+</span>
           <span className={`dropdown-value ${!current ? "text-gray-400" : ""}`}>
             {current || "Select publisher"}
           </span>
@@ -269,12 +279,22 @@ if (current && !options.includes(current)) {
           </section>
 
           {/* LIVING AS CHRISTIANS */}
-          <section className="section red">
-            <h3 className="section-title">Living as Christians</h3>
-            {Select("Part 1", isEditable)}
-            {Select("Part 2", isEditable)}
-            <TextInputRow id="Service Talk" placeholder="Title" />
-          </section>
+<section className="section red">
+  <h3 className="section-title">Living as Christians</h3>
+
+  {/* dynamic Part rows */}
+  <div className="assignment">{Select("Part 1", isEditable)}</div>
+  {livingPartTitles.length > 1 && (
+    <div className="assignment">{Select("Part 2", isEditable)}</div>
+  )}
+
+  {/* Service Talk (text input) only on CO week */}
+  <TextInputRow id="Service Talk" placeholder="Title" />
+
+  {/* CBS rows always present */}
+  <div className="assignment">{Select("CBS Conductor", isEditable)}</div>
+  <div className="assignment">{Select("CBS Reader", isEditable)}</div>
+</section>
 
           {/* DUTIES */}
           <section className="section duties-section">
@@ -290,22 +310,23 @@ if (current && !options.includes(current)) {
         /* ───────── STANDARD MIDWEEK LAYOUT ───────── */
         <>
           {sections.map(sec => {
-            if (sec.marker === "APPLY") {
-              return (
-                <section key="APPLY" className="section beige">
-                  <h3 className="section-title">
-                    <span className="section-title-full">Apply Yourself to the Field&nbsp;Ministry</span>
-                    <span className="section-title-short">Field&nbsp;Ministry</span>
-                  </h3>
-                  {APPLY_ASSIGNMENTS.map(({ key: s, asstKey: a }) => (
-                    <div key={s} className="apply-group">
-                      {Select(s, isEditable)}
-                      {Select(a, isEditable)}
-                    </div>
-                  ))}
-                </section>
-              );
-            }
+            if (sec.shortTitle === "Living as Christians") {
+  return (
+    <section key="LAC" className="section red">
+      <h3 className="section-title">Living as Christians</h3>
+
+      {/* dynamic Part rows */}
+      <div className="assignment">{Select("Part 1", isEditable)}</div>
+      {livingPartTitles.length > 1 && (
+        <div className="assignment">{Select("Part 2", isEditable)}</div>
+      )}
+
+      {/* CBS rows always present */}
+      <div className="assignment">{Select("CBS Conductor", isEditable)}</div>
+      <div className="assignment">{Select("CBS Reader", isEditable)}</div>
+    </section>
+  );
+}
 
             return (
               <section key={sec.shortTitle} className={`section${sec.color ? " " + sec.color : ""}`}>
